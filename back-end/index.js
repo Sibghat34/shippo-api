@@ -1,9 +1,11 @@
+import dotenv from "dotenv";
+dotenv.config();
 import express from "express";
 import cors from "cors";
 import { Shippo } from "shippo";
 
 const shippoClient = new Shippo({
-  apiKeyHeader: "shippo_test_122219bd5b3b2372bd9925548bb3dfe229f559a9",
+  apiKeyHeader: process.env.SHIPPO_API,
   shippoApiVersion: "2018-02-08",
 });
 
