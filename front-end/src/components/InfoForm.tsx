@@ -32,17 +32,44 @@ const formSchema = z.object({
     .string()
     .min(2, { message: "Receiver address must be at least 2 characters." })
     .nonempty("Receiver address is required"),
-  packageWeight: z.string().nonempty("Package weight is required."), // Changed to string
-  length: z.string().nonempty("Length is required."), // Changed to string
-  width: z.string().nonempty("Width is required."), // Changed to string
-  height: z.string().nonempty("Height is required."), // Changed to string
+  packageWeight: z.string().nonempty("Package weight is required."),
+  length: z
+    .string()
+    .nonempty("Length is required.")
+    .refine((value) => parseFloat(value) > 0, {
+      message: "Length must be greater than zero.",
+    }),
+  width: z
+    .string()
+    .nonempty("Width is required.")
+    .refine((value) => parseFloat(value) > 0, {
+      message: "Width must be greater than zero.",
+    }),
+  height: z
+    .string()
+    .nonempty("Height is required.")
+    .refine((value) => parseFloat(value) > 0, {
+      message: "Height must be greater than zero.",
+    }),
 });
+
 
 function InfoForm() {
   const { toast } = useToast();
   const [labelUrl, setLabelUrl] = useState<string | null>(null);
+  
   const form = useForm({
     resolver: zodResolver(formSchema),
+    defaultValues: {
+      senderName: "",
+      senderAddress: "",
+      receiverName: "",
+      receiverAddress: "",
+      packageWeight: "",
+      length: "",
+      width: "",
+      height: "",
+    },
   });
 
   async function onSubmit(values: any) {
@@ -57,7 +84,7 @@ function InfoForm() {
         title: "Shipping Label Created",
       });
 
-      form.reset();
+      form.reset(); // Reset form fields to empty after submission
     } catch (error: any) {
       let errorMessage = "Unknown error occurred";
 
@@ -201,7 +228,7 @@ function InfoForm() {
         </form>
       </Form>
       {labelUrl && (
-        <a className="" href={labelUrl} target="_blank">
+        <a className="w-36" href={labelUrl} target="_blank">
           <Button rel="noopener noreferrer" className="bg-black text-white">
             View Shipping Label
           </Button>
